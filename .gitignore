@@ -1,4 +1,5 @@
 HELP.md
+.pgdata
 application.yml
 .env
 .gradle
