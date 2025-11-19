@@ -3,8 +3,10 @@ package com.example.news.news_letter_back.service;
 import com.example.news.news_letter_back.dto.SubscriberDto;
 import com.example.news.news_letter_back.dto.SubscriberListItemDto;
 import com.example.news.news_letter_back.dto.SubscriberPageResponse;
+import com.example.news.news_letter_back.dto.SubscriberRequestDto;
 import com.example.news.news_letter_back.entity.Subscriber;
 import com.example.news.news_letter_back.repository.SubscriberRepository;
+import com.example.news.news_letter_back.utils.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -75,7 +77,7 @@ public class SubscriberServiceImpl implements SubscriberService{
     @Override
     public ResponseEntity<?> subscribe(String email) {
         // 1. 이메일 형식 검사 (간단하게 contains로만 체크)
-        if (email == null || !email.contains("@")) {
+        if (!EmailValidator.isValid(email)) {
             return ResponseEntity.badRequest().body(
                 Map.of("error", "INVALID_EMAIL_FORMAT", "message", "이메일 형식이 올바르지 않습니다.")
             );
@@ -90,14 +92,7 @@ public class SubscriberServiceImpl implements SubscriberService{
         }
 
         // 3. 새로 구독 저장
-        Subscriber newSubscriber = Subscriber.builder()
-                .email(email)
-                .statusAcode("SUBSCRIBE")
-                .statusBcode("SUB")
-                .unsubscribeToken(UUID.randomUUID().toString())
-                .createdAt(OffsetDateTime.from(Instant.now()))
-                .updatedAt(OffsetDateTime.from(Instant.now()))
-                .build();
+        Subscriber newSubscriber = SubscriberRequestDto.toEntity(email);
 
         subrepo.save(newSubscriber);
 
