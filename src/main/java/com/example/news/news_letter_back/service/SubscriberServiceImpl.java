@@ -121,7 +121,7 @@ public class SubscriberServiceImpl implements SubscriberService{
         // 3. 구독 정보 수정
         Subscriber subscriber = existing.get();
         subscriber.setStatusBcode("UNSUB");
-        subscriber.setUpdatedAt(OffsetDateTime.from(Instant.now()));
+        subscriber.setUpdatedAt(OffsetDateTime.now());
         subrepo.save(subscriber);
 
         return ResponseEntity.ok(
