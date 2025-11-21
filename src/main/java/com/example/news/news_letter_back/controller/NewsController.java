@@ -1,0 +1,22 @@
+package com.example.news.news_letter_back.controller;
+
+import com.example.news.news_letter_back.dto.SendNewsRequestDto;
+import com.example.news.news_letter_back.service.NewsService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController// JSON 형태로 데이터로 받고 응답함
+@RequestMapping("/api/v1/news")
+@RequiredArgsConstructor
+public class NewsController {
+
+    @Autowired private NewsService service;
+
+    // 뉴스레터 이메일을 전송
+    @PostMapping("/send")
+    public ResponseEntity<?> sendNews(@RequestBody SendNewsRequestDto request) {
+        return service.sendNews();
+    }
+}
