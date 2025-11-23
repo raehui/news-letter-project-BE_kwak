@@ -20,6 +20,13 @@ public class SubscriberListInfoDto {
     private OffsetDateTime created_at;
     private String statusBcode;
 
+    public SubscriberListInfoDto(Subscriber subscriber) {
+        this.email = subscriber.getEmail();
+        this.created_at = subscriber.getCreatedAt();
+        this.statusBcode = subscriber.getStatusBcode();
+
+    }
+
     public static SubscriberListInfoDto fromEntity(Subscriber subscriber){
         return SubscriberListInfoDto.builder()
             .email(subscriber.getEmail())

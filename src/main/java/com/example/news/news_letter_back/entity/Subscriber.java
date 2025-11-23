@@ -51,19 +51,7 @@ public class Subscriber {
     })
     private TbBcode statusCode;
 
-    // dto-> entity 로 변경하는 메서드
-    // 클라이언트 요청시에 사용됨
-    public static Subscriber toEntity(SubscriberDto dto){
-        return Subscriber.builder()
-                .subscriber_id(dto.getSubscriberId())
-                .email(dto.getEmail())
-                .statusAcode(dto.getStatusAcode())
-                .statusBcode(dto.getStatusBcode())
-                .unsubscribeToken(dto.getUnsubscribeToken())
-                .createdAt(dto.getCreatedAt())
-                .updatedAt(dto.getUpdatedAt())
-                .build();
-    }
+
 
 }
 
