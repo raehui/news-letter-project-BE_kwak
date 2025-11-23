@@ -1,7 +1,5 @@
 package com.example.news.news_letter_back.dto;
 
-import com.example.news.news_letter_back.entity.Subscriber;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,9 +13,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SubscriberResponseDto {
-    private SubscriberCountDto subscriberCount;
-    private List<SubscriberListInfoDto> subscriberList;
+public class SubscriberCountDto {
+    // 구독자 수
+    private Long totalSubscribers;
+    // 비구독자 수
+    private Long totalUnsubscribers;
 
 
 }
