@@ -15,7 +15,7 @@ public class PostSevice {
     private PostRepository postRepository;
 
     // 글 임시저장
-    public String draft(@RequestBody PostRequestDto postRequestDto) {
+    public String draft(PostRequestDto postRequestDto) {
         Post post = postRequestDto.toEntity();
         post.istitle();
         postRepository.save(post);
@@ -30,6 +30,23 @@ public class PostSevice {
         postRepository.save(post);
 
         return "글을 발행했습니다.";
+    }
+
+    // 글 삭제하기
+    public String delete(Long postId) {
+        postRepository.deleteById(postId);
+        return "글을 삭제했습니다.";
+    }
+
+    // 글 수정하기
+    public String update(PostRequestDto postRequestDto) {
+        Post post = postRepository.findById(postRequestDto.getPostId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글"));
+        post.istitle();
+        post.update(postRequestDto.getTitle(),postRequestDto.getContentHtml());
+        postRepository.save(post);
+
+        return "글을 수정했습니다.";
     }
 
 

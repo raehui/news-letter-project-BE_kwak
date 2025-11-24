@@ -61,16 +61,22 @@ public class Post {
     @Column(name = "published_at")
     private OffsetDateTime publishedAt;
 
-
+    // 제목의 여부 확인
     public void istitle(){
         if(this.title == null||this.title.length()==0){
             throw new IllegalArgumentException("제목이 비었습니다!");
         }
     }
-
+    // 발행하기
     public void publish(){
         this.statusBcode="PUBLISHED";
         this.publishedAt = OffsetDateTime.now();
+    }
+    // 수정하기
+    public void update(String title, String contentHtml) {
+        this.title = title;
+        this.contentHtml = contentHtml;
+        this.updatedAt = OffsetDateTime.now();
     }
 
 
