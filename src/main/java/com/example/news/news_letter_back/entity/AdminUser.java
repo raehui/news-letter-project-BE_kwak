@@ -35,5 +35,6 @@ public class AdminUser {
     @UpdateTimestamp // 수정 시 현재 시간 자동 삽입
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
-    
+
+
 }

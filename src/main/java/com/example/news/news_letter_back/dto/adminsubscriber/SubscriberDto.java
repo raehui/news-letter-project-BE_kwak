@@ -1,7 +1,6 @@
-package com.example.news.news_letter_back.dto;
+package com.example.news.news_letter_back.dto.adminsubscriber;
 
 import com.example.news.news_letter_back.entity.Subscriber;
-import com.example.news.news_letter_back.entity.TbBcode;
 import lombok.*;
 
 import java.time.OffsetDateTime;

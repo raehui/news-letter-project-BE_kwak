@@ -1,12 +1,10 @@
 package com.example.news.news_letter_back.entity;
 
-import com.example.news.news_letter_back.dto.SubscriberDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @NoArgsConstructor

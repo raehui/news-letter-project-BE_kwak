@@ -1,8 +1,8 @@
 package com.example.news.news_letter_back.controller;
 
-import com.example.news.news_letter_back.dto.SubscriberAdminRequestDto;
-import com.example.news.news_letter_back.dto.SubscriberCountDto;
-import com.example.news.news_letter_back.dto.SubscriberListInfoDto;
+import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberAdminRequestDto;
+import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberCountDto;
+import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberListInfoDto;
 import com.example.news.news_letter_back.service.SubscriberAdminService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

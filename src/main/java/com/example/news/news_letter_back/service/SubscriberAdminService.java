@@ -1,8 +1,8 @@
 package com.example.news.news_letter_back.service;
 
-import com.example.news.news_letter_back.dto.SubscriberAdminRequestDto;
-import com.example.news.news_letter_back.dto.SubscriberCountDto;
-import com.example.news.news_letter_back.dto.SubscriberListInfoDto;
+import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberAdminRequestDto;
+import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberCountDto;
+import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberListInfoDto;
 import com.example.news.news_letter_back.entity.Subscriber;
 import com.example.news.news_letter_back.repository.SubscriberAdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;

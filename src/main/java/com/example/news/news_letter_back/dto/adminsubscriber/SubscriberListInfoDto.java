@@ -1,4 +1,4 @@
-package com.example.news.news_letter_back.dto;
+package com.example.news.news_letter_back.dto.adminsubscriber;
 
 import com.example.news.news_letter_back.entity.Subscriber;
 import java.time.OffsetDateTime;
