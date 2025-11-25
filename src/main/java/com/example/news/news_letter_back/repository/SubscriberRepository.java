@@ -13,6 +13,9 @@ public interface SubscriberRepository extends JpaRepository<Subscriber,Long> {
     // 구독일 내림차순
     // 이메일, 구독일(creatde_at), 구독상태(b_name) -> 기본값
     public List<Subscriber> findAllByOrderByCreatedAtDesc();
+
+    // 구독중인 사용자 가져오기
+    public List<Subscriber> findByStatusAcodeAndStatusBcode(String statusACode, String statusBcode);
     
     // 구독하는 사람들의 수
     // 비구독하는 사람들의 수
