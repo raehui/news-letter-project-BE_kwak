@@ -3,6 +3,8 @@ package com.example.news.news_letter_back.controller;
 import com.example.news.news_letter_back.dto.SubscriberPageResponse;
 import com.example.news.news_letter_back.dto.SubscriberRequestDto;
 import com.example.news.news_letter_back.service.SubscriberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController// JSON 형태로 데이터로 받고 응답함
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Tag(name = "News", description = "구독 신청, 취소, 관리 등")
 public class SubscriberController {
 
     @Autowired private SubscriberService service;
