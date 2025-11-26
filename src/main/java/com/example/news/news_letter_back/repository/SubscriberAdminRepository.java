@@ -5,6 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.Query;
+
+
 public interface SubscriberAdminRepository extends JpaRepository<Subscriber,Long> {
     // 구독자 목록 가져오기
     // 구독일 내림차순
@@ -19,4 +24,7 @@ public interface SubscriberAdminRepository extends JpaRepository<Subscriber,Long
     public List<Subscriber> findByEmailContainingAndStatusBcode(String email, String statusBcode);
     public List<Subscriber> findByEmailContaining(String email);
     public List<Subscriber> findByStatusBcode(String statusBcode);
+
+
+
 }
