@@ -1,19 +1,22 @@
-package com.example.news.news_letter_back.service;
+package com.example.news.news_letter_back.infra;
 
 import com.example.news.news_letter_back.entity.Subscriber;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
-import software.amazon.awssdk.services.ses.model.*;
+import software.amazon.awssdk.services.ses.model.BulkEmailDestination;
+import software.amazon.awssdk.services.ses.model.Destination;
+import software.amazon.awssdk.services.ses.model.SendBulkTemplatedEmailRequest;
+import software.amazon.awssdk.services.ses.model.SesException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
-public class EmailServiceImpl implements EmailService {
+public class SESServiceImpl implements SESService {
     @Value("${spring.datasource.mail.sender}")
     private String sender;
 
@@ -60,46 +63,4 @@ public class EmailServiceImpl implements EmailService {
             throw e;
         }
     }
-
-//    @Override
-//    public void sendEmail(String toAddress, String subject, String body) {
-//        try (SesClient client = SesClient.builder()
-//                .region(this.region)
-//                .build()) {
-//
-//            Destination destination = Destination.builder()
-//                    .toAddresses(toAddress)
-//                    .build();
-//
-//            Content title = Content.builder()
-//                    .data(subject)
-//                    .charset("UTF-8")
-//                    .build();
-//
-//            Content htmlContent = Content.builder()
-//                    .data(body)
-//                    .charset("UTF-8")
-//                    .build();
-//
-//            Body emailBody = Body.builder()
-//                    .html(htmlContent)
-//                    .build();
-//
-//            Message message = Message.builder()
-//                    .subject(title)
-//                    .body(emailBody)
-//                    .build();
-//
-//            SendEmailRequest request = SendEmailRequest.builder()
-//                    .destination(destination)
-//                    .message(message)
-//                    .source(this.sender)
-//                    .build();
-//
-//            client.sendEmail(request);
-//        } catch (SesException e) {
-//            System.err.println("SES Error: " + e.awsErrorDetails().errorMessage());
-//            throw e;
-//        }
-//    }
 }
