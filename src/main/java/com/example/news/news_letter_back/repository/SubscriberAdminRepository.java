@@ -19,6 +19,4 @@ public interface SubscriberAdminRepository extends JpaRepository<Subscriber,Long
     public List<Subscriber> findByEmailContainingAndStatusBcode(String email, String statusBcode);
     public List<Subscriber> findByEmailContaining(String email);
     public List<Subscriber> findByStatusBcode(String statusBcode);
-
-
 }
