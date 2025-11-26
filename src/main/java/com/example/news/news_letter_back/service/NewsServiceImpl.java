@@ -1,6 +1,7 @@
 package com.example.news.news_letter_back.service;
 
 import com.example.news.news_letter_back.dto.SendNewsRequestDto;
+import com.example.news.news_letter_back.dto.news.EditEmailTemplateRequestDto;
 import com.example.news.news_letter_back.entity.Subscriber;
 import com.example.news.news_letter_back.infra.SESService;
 import com.example.news.news_letter_back.repository.SubscriberRepository;
@@ -29,5 +30,20 @@ public class NewsServiceImpl implements NewsService {
         return ResponseEntity.ok(
                 Map.of("message", "")
         );
+    }
+
+    @Override
+    public ResponseEntity<?> editEmailTemplate(EditEmailTemplateRequestDto request) {
+        try {
+            if (sesService.editEmailTemplate(request)) {
+                return ResponseEntity.ok(
+                        Map.of("message", "success")
+                );
+            }
+
+            return ResponseEntity.internalServerError().body(Map.of("message", "fail"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("message", "fail", "error", "TEMPLATE_UPDATE_FAILED"));
+        }
     }
 }

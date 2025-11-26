@@ -1,15 +1,13 @@
 package com.example.news.news_letter_back.infra;
 
+import com.example.news.news_letter_back.dto.news.EditEmailTemplateRequestDto;
 import com.example.news.news_letter_back.entity.Subscriber;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
-import software.amazon.awssdk.services.ses.model.BulkEmailDestination;
-import software.amazon.awssdk.services.ses.model.Destination;
-import software.amazon.awssdk.services.ses.model.SendBulkTemplatedEmailRequest;
-import software.amazon.awssdk.services.ses.model.SesException;
+import software.amazon.awssdk.services.ses.model.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,8 +17,13 @@ import java.util.Map;
 public class SESServiceImpl implements SESService {
     @Value("${spring.datasource.mail.sender}")
     private String sender;
-
     private final Region region = Region.AP_NORTHEAST_2;
+
+    private SesClient createClient() {
+        return SesClient.builder()
+                .region(this.region)
+                .build();
+    }
 
     @Override
     public void sendBulkTemplateEmail(List<Subscriber> subscribers, String title, String contents) {
@@ -61,6 +64,36 @@ public class SESServiceImpl implements SESService {
         } catch (SesException e) {
             System.err.println("SES Bulk Error: " + e.awsErrorDetails().errorMessage());
             throw e;
+        }
+    }
+
+    @Override
+    public boolean editEmailTemplate(EditEmailTemplateRequestDto request) {
+        try (SesClient client = createClient()) {
+
+            String templateName = request.getTemplateName();
+            String title = request.getTitle();
+            String contents = request.getContents();
+
+            Template template = Template.builder()
+                    .templateName(templateName)
+                    .subjectPart(title)
+                    .htmlPart(contents)
+                    .textPart(contents)
+                    .build();
+
+            UpdateTemplateRequest updateTemplateRequest = UpdateTemplateRequest.builder()
+                    .template(template)
+                    .build();
+
+            client.updateTemplate(updateTemplateRequest);
+
+            System.out.println("Template updated: " + templateName);
+
+            return true;
+        } catch (SesException e) {
+            System.err.println("SES Update Error: " + e.awsErrorDetails().errorMessage());
+            throw new RuntimeException("SES 템플릿 수정 실패: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
 }

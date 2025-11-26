@@ -1,6 +1,7 @@
 package com.example.news.news_letter_back.controller;
 
 import com.example.news.news_letter_back.dto.SendNewsRequestDto;
+import com.example.news.news_letter_back.dto.news.EditEmailTemplateRequestDto;
 import com.example.news.news_letter_back.service.NewsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +20,11 @@ public class NewsController {
     @PostMapping("/send")
     public ResponseEntity<?> sendNews(@Valid @RequestBody SendNewsRequestDto request) {
         return service.sendNews(request);
+    }
+
+    // 이메일 수정
+    @PostMapping("/edit")
+    public ResponseEntity<?> editEmailTemplate(@RequestBody EditEmailTemplateRequestDto request) {
+        return service.editEmailTemplate(request);
     }
 }
