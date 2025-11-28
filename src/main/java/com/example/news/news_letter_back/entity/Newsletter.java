@@ -62,12 +62,12 @@ public class Newsletter {
     private TbBcode statusCode;
 
     // DB에서 트리거로 자동으로 수정날짜 들어간다.
-    @CreationTimestamp
+
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt; // ???
 
     // DB에서 트리거로 자동으로 수정날짜 들어간다.
-    @UpdateTimestamp
+   
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 

@@ -7,24 +7,16 @@ import lombok.Data;
 
 @Data
 public class NeswletterRequestDto {
-
     // 작성자
     // 제목
     // 컨텐츠 내용
     // 저장상태(PUBLISHED, DRAFT, DELETED)
-    private AdminUser adminUser;
+    private Long newsletterId;
+    private Long adminId;
     private String newsTitle;
     private String contentHtml;
     private String statusBcode;
 
-    // dto를 Entity로 변경
-    public Newsletter toEntity() {
-        return Newsletter.builder()
-            .adminUser(this.adminUser)
-            .newsTitle(this.newsTitle)
-            .contentHtml(this.contentHtml)
-            .statusBcode(this.statusBcode)
-            .build();
-    }
+
 
 }
