@@ -1,9 +1,21 @@
 package com.example.news.news_letter_back.entity;
 
-import com.example.news.news_letter_back.dto.post.PostRequestDto;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,27 +25,27 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Setter
 @Builder
 @Entity
-@Table(name = "post")
-public class Post {
+@Table(name = "newsletter")
+public class Newsletter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long newsletterId;
 
     // 지연로딩으로 필요할 때, DB에서 가져옴
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", nullable = false)
     private AdminUser adminUser;
 
-    @Column(nullable = false)
-    private String title;
+    @Column(name = "news_title", nullable = false)
+    private String newsTitle;
 
-    @Column(columnDefinition = "TEXT")   // 이미지 URL도 들어가므로 TEXT 타입 유지
+    @Column(name = "news_content_html", columnDefinition = "TEXT")   // 이미지 URL도 들어가므로 TEXT 타입 유지
     private String contentHtml;
 
     @Builder.Default
     @Column(name = "status_acode", nullable = false)
-    private String statusAcode = "POST";
+    private String statusAcode = "EMAIL";
 
     @Builder.Default
     @Column(name = "status_bcode", nullable = false)
@@ -50,21 +62,25 @@ public class Post {
     private TbBcode statusCode;
 
     // DB에서 트리거로 자동으로 수정날짜 들어간다.
-
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt; // ???
 
     // DB에서 트리거로 자동으로 수정날짜 들어간다.
-
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
+
+
+    @Column(name = "scheduled_at")
+    private OffsetDateTime scheduledAt;
 
     @Column(name = "published_at")
     private OffsetDateTime publishedAt;
 
     // 제목의 여부 확인
-    public void istitle(){
-        if(this.title == null||this.title.length()==0){
+    public void istitle() {
+        if (this.newsTitle == null || this.newsTitle.length() == 0) {
             throw new IllegalArgumentException("제목이 비었습니다!");
         }
     }
@@ -73,12 +89,12 @@ public class Post {
         this.statusBcode="PUBLISHED";
         this.publishedAt = OffsetDateTime.now();
     }
+
     // 수정하기
-    public void update(String title, String contentHtml) {
-        this.title = title;
+    public void update(String newstitle, String contentHtml) {
+        this.newsTitle = newstitle;
         this.contentHtml = contentHtml;
         this.updatedAt = OffsetDateTime.now();
     }
-
 
 }

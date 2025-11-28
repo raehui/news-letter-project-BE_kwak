@@ -25,7 +25,16 @@ public class PostSevice {
 
     // 글 임시저장
     public String draft(PostRequestDto postRequestDto) {
-        Post post = postRequestDto.toEntity();
+        AdminUser adminUser = adminUserRepository.findById(postRequestDto.getAdminId())
+            .orElseThrow(() -> new IllegalArgumentException());
+
+        Post post = Post.builder()
+            .adminUser(adminUser)
+            .title(postRequestDto.getTitle())
+            .contentHtml(postRequestDto.getContentHtml())
+            .statusBcode(postRequestDto.getStatusBcode())
+            .build();
+
         post.istitle();
         postRepository.save(post);
         return "글을 임시저장 했습니다.";
@@ -92,7 +101,7 @@ public class PostSevice {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException());
         // 작성자 id로 작성자 데이터 찾기
-        AdminUser adminuser =adminUserRepository.findById(postId)
+        AdminUser adminuser = adminUserRepository.findById(postId)
             .orElseThrow();
 
         return PostResponseDto.fromEntity(post, adminuser);
