@@ -20,6 +20,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
+    // 지연로딩으로 필요할 때, DB에서 가져옴
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", nullable = false)
     private AdminUser adminUser;

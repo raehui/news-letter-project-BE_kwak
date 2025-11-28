@@ -15,6 +15,7 @@ public class PostRequestDto {
     private AdminUser adminUser;
     private String title;
     private String contentHtml;
+    private String statusBcode;
     
     // dto를 Entity로 변경
     public Post toEntity() {
@@ -23,6 +24,7 @@ public class PostRequestDto {
             .adminUser(this.adminUser)
             .title(this.title)
             .contentHtml(this.contentHtml)
+            .statusBcode(this.statusBcode)
             .build();
     }
 

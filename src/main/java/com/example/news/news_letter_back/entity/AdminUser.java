@@ -17,7 +17,7 @@ import java.time.ZonedDateTime;
 public class AdminUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가 매핑
-    private Long id;
+    private Long adminId;
 
     @Column(nullable = false, unique = true)
     private String email;
