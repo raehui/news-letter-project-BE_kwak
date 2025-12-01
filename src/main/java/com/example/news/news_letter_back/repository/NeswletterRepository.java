@@ -11,10 +11,10 @@ public interface NeswletterRepository extends JpaRepository<Newsletter, Long> {
     public List<Newsletter> findAll();
 
     // 검색조건 (제목, 발행상태)
-//    public List<Newsletter> findByTitleContainingAndStatusBcode(String newsTitle, String statusBcode);
+    public List<Newsletter> findBynewsTitleContainingAndStatusBcode(String newsTitle, String statusBcode);
 
-//    public List<Newsletter> findByTitleContaining(String title);
+    public List<Newsletter> findBynewsTitleContaining(String newsTitle);
 
-//    public List<Newsletter> findByStatusBcode(String statusBcode);
+    public List<Newsletter> findByStatusBcode(String statusBcode);
 
 }
