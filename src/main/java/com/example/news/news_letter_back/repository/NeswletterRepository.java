@@ -5,7 +5,7 @@ import com.example.news.news_letter_back.entity.Post;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NeswletterRepository extends JpaRepository<Newsletter,Long> {
+public interface NeswletterRepository extends JpaRepository<Newsletter, Long> {
 
     // 검색조건 없을 때, 기본 목록 가져오기
     public List<Newsletter> findAll();

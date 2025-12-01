@@ -91,9 +91,10 @@ public class Newsletter {
     }
 
     // 수정하기
-    public void update(String newstitle, String contentHtml) {
+    public void update(String newstitle, String contentHtml, String statusBcode) {
         this.newsTitle = newstitle;
         this.contentHtml = contentHtml;
+        this.statusBcode = statusBcode;
         this.updatedAt = OffsetDateTime.now();
     }
 

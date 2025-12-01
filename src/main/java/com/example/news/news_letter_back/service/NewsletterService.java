@@ -35,5 +35,26 @@ public class NewsletterService {
         return "뉴스레터를 임시저장 했습니다.";
     }
 
+    // 글 발행하기
+    public String publishnews(Long newsletterId) {
+        Newsletter newsletter = neswletterRepository.findById(newsletterId)
+            .orElseThrow(() -> new IllegalArgumentException());
+        newsletter.publish();
+        neswletterRepository.save(newsletter);
+
+        return "글을 발행했습니다.";
+    }
+
+    // 글 수정하기
+    public String updatenews(NeswletterRequestDto newsletterRequestDto) {
+        Newsletter newsletter = neswletterRepository.findById(newsletterRequestDto.getNewsletterId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글"));
+        newsletter.istitle();
+        newsletter.update(newsletterRequestDto.getNewsTitle(), newsletterRequestDto.getContentHtml(), newsletterRequestDto.getStatusBcode());
+        neswletterRepository.save(newsletter);
+
+        return "글을 수정했습니다.";
+    }
+
 
 }

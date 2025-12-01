@@ -74,9 +74,10 @@ public class Post {
         this.publishedAt = OffsetDateTime.now();
     }
     // 수정하기
-    public void update(String title, String contentHtml) {
+    public void update(String title, String contentHtml,String  statusBcode) {
         this.title = title;
         this.contentHtml = contentHtml;
+        this.statusBcode = statusBcode;
         this.updatedAt = OffsetDateTime.now();
     }
 

@@ -61,7 +61,7 @@ public class PostSevice {
         Post post = postRepository.findById(postRequestDto.getPostId())
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글"));
         post.istitle();
-        post.update(postRequestDto.getTitle(), postRequestDto.getContentHtml());
+        post.update(postRequestDto.getTitle(), postRequestDto.getContentHtml(), postRequestDto.getStatusBcode());
         postRepository.save(post);
 
         return "글을 수정했습니다.";
