@@ -33,7 +33,6 @@ public class SubscriberController {
     private SubscriberAdminService adminservice;
     @Autowired
     private SubscriberService service;
-
     // 구독자, 비구독자 통계 데이터 가져오기
     @GetMapping("/admin/subscriber/count")
     public SubscriberCountDto getSubscriberCount() {
