@@ -1,12 +1,12 @@
 package com.example.news.news_letter_back.service;
 
 import com.example.news.news_letter_back.dto.SendNewsRequestDto;
-import com.example.news.news_letter_back.dto.news.EditEmailTemplateRequestDto;
-import com.example.news.news_letter_back.dto.news.EditEmailTemplateResponseDto;
-import com.example.news.news_letter_back.dto.news.GetNewsletterListResponseDto;
-import com.example.news.news_letter_back.dto.news.NewsletterDto;
+import com.example.news.news_letter_back.dto.news.*;
+import com.example.news.news_letter_back.entity.AdminUser;
+import com.example.news.news_letter_back.entity.Newsletter;
 import com.example.news.news_letter_back.entity.Subscriber;
 import com.example.news.news_letter_back.infra.SESService;
+import com.example.news.news_letter_back.repository.AdminUserRepository;
 import com.example.news.news_letter_back.repository.NewsletterRepository;
 import com.example.news.news_letter_back.repository.SubscriberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,8 @@ public class NewsServiceImpl implements NewsService {
     private SubscriberRepository subscriberRepository;
     @Autowired
     private NewsletterRepository newsletterRepository;
+    @Autowired
+    private AdminUserRepository adminUserRepository;
     @Autowired
     private SESService sesService;
 
@@ -72,6 +74,38 @@ public class NewsServiceImpl implements NewsService {
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(GetNewsletterListResponseDto.fromEntity(List.of()));
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> createEmail(CreateEmailRequestDto request) {
+        try {
+            // 관리자 가져오기
+            List<AdminUser> admins = adminUserRepository.findAll();
+            if (admins.isEmpty()) {
+                throw new RuntimeException("NO_ADMIN_USER_FOUND");
+            }
+
+            AdminUser admin = admins.get(0);
+            Newsletter entity = CreateEmailRequestDto.toEntity(request, admin);
+
+
+            var saved = newsletterRepository.save(entity);
+
+            return ResponseEntity.ok(
+                    Map.of(
+                            "id", saved.getId(),
+                            "message", "NEWSLETTER_CREATED"
+                    )
+            );
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            return ResponseEntity.internalServerError()
+                    .body(
+                            Map.of(
+                                    "message", "CREATE_FAILED"
+                            )
+                    );
         }
     }
 }

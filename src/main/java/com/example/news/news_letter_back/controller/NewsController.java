@@ -1,6 +1,7 @@
 package com.example.news.news_letter_back.controller;
 
 import com.example.news.news_letter_back.dto.SendNewsRequestDto;
+import com.example.news.news_letter_back.dto.news.CreateEmailRequestDto;
 import com.example.news.news_letter_back.dto.news.EditEmailTemplateRequestDto;
 import com.example.news.news_letter_back.dto.news.EditEmailTemplateResponseDto;
 import com.example.news.news_letter_back.dto.news.GetNewsletterListResponseDto;
@@ -41,5 +42,11 @@ public class NewsController {
             Pageable pageable
     ) {
         return service.getEmailList(pageable);
+    }
+
+    // 이메일 템플릿 등록
+    @PostMapping("/create")
+    public ResponseEntity<?> createEmail(@RequestBody CreateEmailRequestDto request) {
+        return service.createEmail(request);
     }
 }
