@@ -6,6 +6,10 @@ import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberListInfoD
 import com.example.news.news_letter_back.entity.Subscriber;
 import com.example.news.news_letter_back.repository.SubscriberAdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,31 +21,63 @@ public class SubscriberAdminService {
     private SubscriberAdminRepository subrepo;
 
     // 이메일, 구독상태에 맞는 구독자 리스트
-    public List<SubscriberListInfoDto> getSubscriber(
+//    public List<SubscriberListInfoDto> getSubscriber(
+//        SubscriberAdminRequestDto subscriberAdminRequestDto) {
+//        // 검색조건에 맞는 리스트
+//        List<Subscriber> entities;
+//
+//        // 검색 조건 가져오기
+//        String email = subscriberAdminRequestDto.getEmail();
+//        String status_bcode = subscriberAdminRequestDto.getStatusBcode();
+//
+//        // 이메일&상태값 모두 존재
+//        if (email != null && !email.isBlank() && status_bcode != null && !status_bcode.equals(
+//            "ALL")) {
+//            entities = subrepo.findByEmailContainingAndStatusBcode(email, status_bcode);
+//        } else if (email != null && !email.isBlank()) {
+//            entities = subrepo.findByEmailContaining(email);
+//        } else if (status_bcode != null && !status_bcode.equals("ALL")) {
+//            entities = subrepo.findByStatusBcode(status_bcode);
+//        } else {
+//            entities = subrepo.findAllByOrderByCreatedAtDesc();
+//        }
+//
+//        //엔티티를 dto에 맵핑
+//        List<SubscriberListInfoDto> SubscriberList = entities.stream()
+//            .map(SubscriberListInfoDto::new).toList();
+//        return SubscriberList;
+//    }
+
+    // 이메일, 구독상태에 맞는 구독자 리스트 + 페이징처리
+    public Page<SubscriberListInfoDto> getSubscriber(
         SubscriberAdminRequestDto subscriberAdminRequestDto) {
-        // 검색조건에 맞는 리스트
-        List<Subscriber> entities;
 
         // 검색 조건 가져오기
         String email = subscriberAdminRequestDto.getEmail();
         String status_bcode = subscriberAdminRequestDto.getStatusBcode();
+        
+        // 페이징정보(페이지 차례, 행의 개수)
+        int page = subscriberAdminRequestDto.getPage();
+        int size = subscriberAdminRequestDto.getSize();
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Subscriber> entitiesPage;
 
         // 이메일&상태값 모두 존재
         if (email != null && !email.isBlank() && status_bcode != null && !status_bcode.equals(
             "ALL")) {
-            entities = subrepo.findByEmailContainingAndStatusBcode(email, status_bcode);
+            entitiesPage = subrepo.findByEmailContainingAndStatusBcode(email, status_bcode, pageable);
         } else if (email != null && !email.isBlank()) {
-            entities = subrepo.findByEmailContaining(email);
+            entitiesPage = subrepo.findByEmailContaining(email,pageable);
         } else if (status_bcode != null && !status_bcode.equals("ALL")) {
-            entities = subrepo.findByStatusBcode(status_bcode);
+            entitiesPage = subrepo.findByStatusBcode(status_bcode,pageable);
         } else {
-            entities = subrepo.findAllByOrderByCreatedAtDesc();
+            entitiesPage = subrepo.findAllByOrderByCreatedAtDesc(pageable);
         }
 
         //엔티티를 dto에 맵핑
-        List<SubscriberListInfoDto> SubscriberList = entities.stream()
-            .map(SubscriberListInfoDto::new).toList();
-        return SubscriberList;
+        return entitiesPage.map(SubscriberListInfoDto::fromEntity);
     }
 
     // 구독자, 비구독자 통계 정보

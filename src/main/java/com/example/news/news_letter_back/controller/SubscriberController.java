@@ -1,6 +1,7 @@
 package com.example.news.news_letter_back.controller;
 
 
+import com.example.news.news_letter_back.dto.PageResponseDto;
 import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberAdminRequestDto;
 import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberCountDto;
 import com.example.news.news_letter_back.dto.adminsubscriber.SubscriberListInfoDto;
@@ -8,6 +9,7 @@ import com.example.news.news_letter_back.service.SubscriberAdminService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,8 +44,10 @@ public class SubscriberController {
 
     // 검색조건 : 이메일 주소, 구독 상태에 맞는 구독자 목록 조회
     @GetMapping("/admin/subscriber/list")
-    public List<SubscriberListInfoDto> getSubscriber(@RequestBody SubscriberAdminRequestDto subadminrequestdto) {
-        return adminservice.getSubscriber(subadminrequestdto);
+    public PageResponseDto<SubscriberListInfoDto> getSubscriber(
+        @RequestBody SubscriberAdminRequestDto subadminrequestdto) {
+        Page<SubscriberListInfoDto> pageResult=adminservice.getSubscriber(subadminrequestdto);
+        return PageResponseDto.from(pageResult);
     }
 
 
