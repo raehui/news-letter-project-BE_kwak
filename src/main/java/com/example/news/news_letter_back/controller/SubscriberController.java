@@ -51,6 +51,7 @@ public class SubscriberController {
     }
 
 
+
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@RequestBody SubscriberRequestDto request) {
         return service.subscribe(request.getEmail());
@@ -60,5 +61,6 @@ public class SubscriberController {
     public ResponseEntity<?> unsubscribe(@RequestParam("token") String token) {
         return service.unsubscribe(token);
     }
+
 
 }
