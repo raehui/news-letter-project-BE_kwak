@@ -50,6 +50,12 @@ public class SubscriberController {
         return PageResponseDto.from(pageResult);
     }
 
+    // 구독자 정보 영구 삭제
+    @DeleteMapping("/admin/subscriber/delete/{subscriberId}")
+    public String delete(@PathVariable Long subscriberId) {
+        return adminservice.delete(subscriberId);
+    }
+
 
 
     @PostMapping("/subscribe")

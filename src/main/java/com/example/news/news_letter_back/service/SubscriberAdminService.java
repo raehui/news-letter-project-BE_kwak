@@ -93,4 +93,9 @@ public class SubscriberAdminService {
         return countDto;
     }
 
+    // 구독자 정보 영구 삭제
+    public String delete(Long subscriberId) {
+        subrepo.deleteById(subscriberId);
+        return "구독자를 영구 삭제했습니다.";
+    }
 }
