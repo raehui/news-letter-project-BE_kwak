@@ -17,6 +17,10 @@ public class NeswletterRequestDto {
     private String contentHtml;
     private String statusBcode;
 
+    // 페이징 처리 정보
+    private int page = 0; // 현재 조회하고 있는 페이지의 차례
+    private int size = 6; // 한 페이지에 나타나는 행의 개수
+
 
 
 }

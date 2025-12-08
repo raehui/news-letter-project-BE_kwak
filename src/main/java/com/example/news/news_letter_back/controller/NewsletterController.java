@@ -1,5 +1,6 @@
 package com.example.news.news_letter_back.controller;
 
+import com.example.news.news_letter_back.dto.PageResponseDto;
 import com.example.news.news_letter_back.dto.newsletter.NeswletterRequestDto;
 import com.example.news.news_letter_back.dto.newsletter.NewsletterListInfoDto;
 import com.example.news.news_letter_back.dto.newsletter.NewsletterResponseDto;
@@ -10,6 +11,7 @@ import com.example.news.news_letter_back.service.NewsletterService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -52,9 +54,11 @@ public class NewsletterController {
     // 글 목록
     // 검색조건 : 제목, 뉴스레터 발행 상태
     @GetMapping("/admin/news/list")
-    public List<NewsletterListInfoDto> getNews(@RequestBody NeswletterRequestDto newsletterRequestDto) {
-        return service.getnews(newsletterRequestDto);
+    public PageResponseDto<NewsletterListInfoDto> getNews(@RequestBody NeswletterRequestDto newsletterRequestDto) {
+        Page<NewsletterListInfoDto> PageResult = service.getNews(newsletterRequestDto);
+        return PageResponseDto.from(PageResult);
     }
+
     // 글 상세
     // 제목, 내용, 상태(발행, 임시저장), 발행날짜 or 수정날짜
     @GetMapping("/admin/news/detail/{newsletterId}")

@@ -13,6 +13,9 @@ import com.example.news.news_letter_back.repository.AdminUserRepository;
 import com.example.news.news_letter_back.repository.NeswletterRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -69,33 +72,37 @@ public class NewsletterService {
         return "글을 삭제했습니다.";
     }
 
-    // 글 목록 가져오기
-    public List<NewsletterListInfoDto> getnews(NeswletterRequestDto newsletterRequestDto) {
-        // 검색조건에 맞는 리스트
-        List<Newsletter> entities;
+    // 글 목록 가져오기 + 페이징 처리하기
+    public Page<NewsletterListInfoDto> getNews(NeswletterRequestDto newsletterRequestDto) {
 
         // 검색조건 가져오기
         String NewsTitle = newsletterRequestDto.getNewsTitle();
         String status_bcode = newsletterRequestDto.getStatusBcode();
 
+        // 페이징정보(페이지 차례, 행의 개수)
+        int page = newsletterRequestDto.getPage();
+        int size = newsletterRequestDto.getSize();
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Newsletter> entitiesPage;
+
         // 검색조건에 따라서 글 가지고 오기
         if (NewsTitle != null && !NewsTitle.isBlank() && status_bcode != null && !status_bcode.equals(
             "ALL")) {
-            entities = neswletterRepository.findBynewsTitleContainingAndStatusBcode(NewsTitle, status_bcode);
+            entitiesPage = neswletterRepository.findBynewsTitleContainingAndStatusBcode(NewsTitle, status_bcode, pageable);
         } else if (NewsTitle != null && !NewsTitle.isBlank()) {
-            entities = neswletterRepository.findBynewsTitleContaining(NewsTitle);
+            entitiesPage = neswletterRepository.findBynewsTitleContaining(NewsTitle,pageable);
         } else if (status_bcode != null && !status_bcode.equals("ALL")) {
-            entities = neswletterRepository.findByStatusBcode(status_bcode);
+            entitiesPage = neswletterRepository.findByStatusBcode(status_bcode,pageable);
         } else {
-            entities = neswletterRepository.findAll();
+            entitiesPage = neswletterRepository.findAll(pageable);
         }
 
-        // 엔티티를 dto에 맵핑하기
-        List<NewsletterListInfoDto> NewsletterList = entities.stream()
-            .map(NewsletterListInfoDto::new).toList();
 
-        return NewsletterList;
+        return entitiesPage.map(NewsletterListInfoDto::fromEntity);
     }
+
     // 글 상세보기
     public NewsletterResponseDto getNewsletterDetail(Long newsletterId) {
         // 글id로 원하는 글 데이터 찾기
