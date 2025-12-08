@@ -26,7 +26,25 @@ public class NewsletterService {
     @Autowired
     AdminUserRepository adminUserRepository;
 
-    // 글 임시저장
+    // 새 글 발행하기
+    public String publishNews(NeswletterRequestDto newsletterRequestDto) {
+        AdminUser adminUser = adminUserRepository.findById(newsletterRequestDto.getAdminId())
+            .orElseThrow(() -> new IllegalArgumentException());
+
+        Newsletter newsletter = Newsletter.builder()
+            .adminUser(adminUser)
+            .newsTitle(newsletterRequestDto.getNewsTitle())
+            .contentHtml(newsletterRequestDto.getContentHtml())
+            .statusBcode(newsletterRequestDto.getStatusBcode())
+            .build();
+
+        newsletter.istitle();
+        newsletter.publish();
+        neswletterRepository.save(newsletter);
+        return "뉴스레터를 발행했습니다.";
+    }
+
+    // 새 글 임시저장
     public String draftnews(NeswletterRequestDto newsletterRequestDto) {
         AdminUser adminUser = adminUserRepository.findById(newsletterRequestDto.getAdminId())
             .orElseThrow(() -> new IllegalArgumentException());
@@ -44,17 +62,17 @@ public class NewsletterService {
     }
 
     // 글 발행하기
-    public String publishnews(Long newsletterId) {
-        Newsletter newsletter = neswletterRepository.findById(newsletterId)
-            .orElseThrow(() -> new IllegalArgumentException());
-        newsletter.publish();
-        neswletterRepository.save(newsletter);
+//    public String publishnews(Long newsletterId) {
+//        Newsletter newsletter = neswletterRepository.findById(newsletterId)
+//            .orElseThrow(() -> new IllegalArgumentException());
+//        newsletter.publish();
+//        neswletterRepository.save(newsletter);
+//
+//        return "글을 발행했습니다.";
+//    }
 
-        return "글을 발행했습니다.";
-    }
-
-    // 글 수정하기
-    public String updatenews(NeswletterRequestDto newsletterRequestDto) {
+    // 글 수정 + 임시저장
+    public String updatRedrafteNews(NeswletterRequestDto newsletterRequestDto) {
         Newsletter newsletter = neswletterRepository.findById(
                 newsletterRequestDto.getNewsletterId())
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글"));
@@ -63,7 +81,21 @@ public class NewsletterService {
             newsletterRequestDto.getContentHtml(), newsletterRequestDto.getStatusBcode());
         neswletterRepository.save(newsletter);
 
-        return "글을 수정했습니다.";
+        return "수정한 글을 임시저장 했습니다.";
+    }
+    
+    // 글 수정 + 발행하기
+    public String updatPulisheNews(NeswletterRequestDto newsletterRequestDto) {
+        Newsletter newsletter = neswletterRepository.findById(
+                newsletterRequestDto.getNewsletterId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글"));
+        newsletter.istitle();
+        newsletter.update(newsletterRequestDto.getNewsTitle(),
+            newsletterRequestDto.getContentHtml(), newsletterRequestDto.getStatusBcode());
+        newsletter.publish();
+        neswletterRepository.save(newsletter);
+
+        return "수정한 글을 발행 했습니다.";
     }
 
     // 글 삭제하기
@@ -88,17 +120,18 @@ public class NewsletterService {
         Page<Newsletter> entitiesPage;
 
         // 검색조건에 따라서 글 가지고 오기
-        if (NewsTitle != null && !NewsTitle.isBlank() && status_bcode != null && !status_bcode.equals(
+        if (NewsTitle != null && !NewsTitle.isBlank() && status_bcode != null
+            && !status_bcode.equals(
             "ALL")) {
-            entitiesPage = neswletterRepository.findBynewsTitleContainingAndStatusBcode(NewsTitle, status_bcode, pageable);
+            entitiesPage = neswletterRepository.findBynewsTitleContainingAndStatusBcode(NewsTitle,
+                status_bcode, pageable);
         } else if (NewsTitle != null && !NewsTitle.isBlank()) {
-            entitiesPage = neswletterRepository.findBynewsTitleContaining(NewsTitle,pageable);
+            entitiesPage = neswletterRepository.findBynewsTitleContaining(NewsTitle, pageable);
         } else if (status_bcode != null && !status_bcode.equals("ALL")) {
-            entitiesPage = neswletterRepository.findByStatusBcode(status_bcode,pageable);
+            entitiesPage = neswletterRepository.findByStatusBcode(status_bcode, pageable);
         } else {
             entitiesPage = neswletterRepository.findAll(pageable);
         }
-
 
         return entitiesPage.map(NewsletterListInfoDto::fromEntity);
     }

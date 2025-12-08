@@ -28,22 +28,34 @@ public class NewsletterController {
     private NewsletterService service;
 
     // 글 발행
-    @PostMapping("/admin/news/publish/{newsletterId}")
-    public String publishNews(@PathVariable Long newsletterId) {
-        return service.publishnews(newsletterId);
+//    @PostMapping("/admin/news/publish/{newsletterId}")
+//    public String publishNews(@PathVariable Long newsletterId) {
+//        return service.publishnews(newsletterId);
+//    }
+    // (새로 작성한 )글 발행하기
+    @PostMapping("/admin/news/publish")
+    public String publishNews(@RequestBody NeswletterRequestDto newsletterRequestDto) {
+        return service.publishNews(newsletterRequestDto);
     }
 
-    // 글 임시저장
+    // (새로 작성한)글 임시저장
     @PostMapping("/admin/news/draft")
     public String draftNews(@RequestBody NeswletterRequestDto newsletterRequestDto) {
         return service.draftnews(newsletterRequestDto);
     }
 
-    // 글 수정
-    @PatchMapping("/admin/news/update")
-    public String update(@RequestBody NeswletterRequestDto newsletterRequestDto) {
-        return service.updatenews(newsletterRequestDto);
+    // (임시 저장한)글 재임시저장
+    @PatchMapping("/admin/news/update/redraft")
+    public String updateRedraft(@RequestBody NeswletterRequestDto newsletterRequestDto) {
+        return service.updatRedrafteNews(newsletterRequestDto);
     }
+
+    // (임시저장한) 글 발행하기
+    @PatchMapping("/admin/news/update/publish")
+    public String updatePublish(@RequestBody NeswletterRequestDto newsletterRequestDto) {
+        return service.updatPulisheNews(newsletterRequestDto);
+    }
+
 
     // 글 삭제
     @DeleteMapping("/admin/news/delete/{newsletterId}")
