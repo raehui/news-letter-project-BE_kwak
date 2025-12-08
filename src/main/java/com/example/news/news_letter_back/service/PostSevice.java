@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -68,31 +71,61 @@ public class PostSevice {
     }
 
     // 글 목록 가져오기
-    public List<PostListInfoDto> getPost(PostRequestDto postRequestDto) {
-        // 검색조건에 맞는 리스트
-        List<Post> entities;
+//    public List<PostListInfoDto> getPost(PostRequestDto postRequestDto) {
+//        // 검색조건에 맞는 리스트
+//        List<Post> entities;
+//
+//        // 검색조건 가져오기
+//        String title = postRequestDto.getTitle();
+//        String status_bcode = postRequestDto.getStatusBcode();
+//
+//        // 검색조건에 따라서 글 가지고 오기
+//        if (title != null && !title.isBlank() && status_bcode != null && !status_bcode.equals(
+//            "ALL")) {
+//            entities = postRepository.findByTitleContainingAndStatusBcode(title, status_bcode);
+//        } else if (title != null && !title.isBlank()) {
+//            entities = postRepository.findByTitleContaining(title);
+//        } else if (status_bcode != null && !status_bcode.equals("ALL")) {
+//            entities = postRepository.findByStatusBcode(status_bcode);
+//        } else {
+//            entities = postRepository.findAll();
+//        }
+//
+//        // 엔티티를 dto에 맵핑하기
+//        List<PostListInfoDto> PostList = entities.stream()
+//            .map(PostListInfoDto::new).toList();
+//
+//        return PostList;
+//    }
+
+    // 글 목록 가져오기 + 페이징 처리
+    public Page<PostListInfoDto> getPost(PostRequestDto postRequestDto) {
 
         // 검색조건 가져오기
         String title = postRequestDto.getTitle();
         String status_bcode = postRequestDto.getStatusBcode();
 
+        // 페이징정보(페이지 차례, 행의 개수)
+        int page = postRequestDto.getPage();
+        int size = postRequestDto.getSize();
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Post> entitiesPage;
+
         // 검색조건에 따라서 글 가지고 오기
         if (title != null && !title.isBlank() && status_bcode != null && !status_bcode.equals(
             "ALL")) {
-            entities = postRepository.findByTitleContainingAndStatusBcode(title, status_bcode);
+            entitiesPage = postRepository.findByTitleContainingAndStatusBcode(title, status_bcode, pageable);
         } else if (title != null && !title.isBlank()) {
-            entities = postRepository.findByTitleContaining(title);
+            entitiesPage = postRepository.findByTitleContaining(title, pageable);
         } else if (status_bcode != null && !status_bcode.equals("ALL")) {
-            entities = postRepository.findByStatusBcode(status_bcode);
+            entitiesPage = postRepository.findByStatusBcode(status_bcode, pageable);
         } else {
-            entities = postRepository.findAll();
+            entitiesPage = postRepository.findAll(pageable);
         }
 
-        // 엔티티를 dto에 맵핑하기
-        List<PostListInfoDto> PostList = entities.stream()
-            .map(PostListInfoDto::new).toList();
-
-        return PostList;
+        return entitiesPage.map(PostListInfoDto::fromEntity);
     }
 
     // 글 상세보기
