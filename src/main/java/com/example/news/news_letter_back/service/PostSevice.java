@@ -26,7 +26,25 @@ public class PostSevice {
     @Autowired
     AdminUserRepository adminUserRepository;
 
-    // 글 임시저장
+    // 새 글 발행하기
+    public String publishNew(PostRequestDto postRequestDto) {
+        AdminUser adminUser = adminUserRepository.findById(postRequestDto.getAdminId())
+            .orElseThrow(() -> new IllegalArgumentException());
+
+        Post post = Post.builder()
+            .adminUser(adminUser)
+            .title(postRequestDto.getTitle())
+            .contentHtml(postRequestDto.getContentHtml())
+            .statusBcode(postRequestDto.getStatusBcode())
+            .build();
+
+        post.istitle();
+        post.publish();
+        postRepository.save(post);
+        return "글을 발행했습니다.";
+    }
+
+    //새 글 임시저장
     public String draft(PostRequestDto postRequestDto) {
         AdminUser adminUser = adminUserRepository.findById(postRequestDto.getAdminId())
             .orElseThrow(() -> new IllegalArgumentException());
@@ -43,15 +61,6 @@ public class PostSevice {
         return "글을 임시저장 했습니다.";
     }
 
-    // 글 발행하기
-    public String publish(Long postId) {
-        Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new IllegalArgumentException());
-        post.publish();
-        postRepository.save(post);
-
-        return "글을 발행했습니다.";
-    }
 
     // 글 삭제하기
     public String delete(Long postId) {
@@ -59,44 +68,29 @@ public class PostSevice {
         return "글을 삭제했습니다.";
     }
 
-    // 글 수정하기
-    public String update(PostRequestDto postRequestDto) {
+    // 글 수정하기 + 임시저장
+    public String updateRedraft(PostRequestDto postRequestDto) {
         Post post = postRepository.findById(postRequestDto.getPostId())
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글"));
         post.istitle();
-        post.update(postRequestDto.getTitle(), postRequestDto.getContentHtml(), postRequestDto.getStatusBcode());
+        post.update(postRequestDto.getTitle(), postRequestDto.getContentHtml(),
+            postRequestDto.getStatusBcode());
         postRepository.save(post);
-
-        return "글을 수정했습니다.";
+        return "수정한 글을 임시저장 했습니다.";
     }
 
-    // 글 목록 가져오기
-//    public List<PostListInfoDto> getPost(PostRequestDto postRequestDto) {
-//        // 검색조건에 맞는 리스트
-//        List<Post> entities;
-//
-//        // 검색조건 가져오기
-//        String title = postRequestDto.getTitle();
-//        String status_bcode = postRequestDto.getStatusBcode();
-//
-//        // 검색조건에 따라서 글 가지고 오기
-//        if (title != null && !title.isBlank() && status_bcode != null && !status_bcode.equals(
-//            "ALL")) {
-//            entities = postRepository.findByTitleContainingAndStatusBcode(title, status_bcode);
-//        } else if (title != null && !title.isBlank()) {
-//            entities = postRepository.findByTitleContaining(title);
-//        } else if (status_bcode != null && !status_bcode.equals("ALL")) {
-//            entities = postRepository.findByStatusBcode(status_bcode);
-//        } else {
-//            entities = postRepository.findAll();
-//        }
-//
-//        // 엔티티를 dto에 맵핑하기
-//        List<PostListInfoDto> PostList = entities.stream()
-//            .map(PostListInfoDto::new).toList();
-//
-//        return PostList;
-//    }
+    // 글 수정 + 발행하기
+    public String updatePublish(PostRequestDto postRequestDto) {
+        Post post = postRepository.findById(postRequestDto.getPostId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글"));
+        post.istitle();
+        post.update(postRequestDto.getTitle(), postRequestDto.getContentHtml(),
+            postRequestDto.getStatusBcode());
+        post.publish();
+        postRepository.save(post);
+
+        return "수정한 글을 발행 했습니다.";
+    }
 
     // 글 목록 가져오기 + 페이징 처리
     public Page<PostListInfoDto> getPost(PostRequestDto postRequestDto) {
@@ -116,7 +110,8 @@ public class PostSevice {
         // 검색조건에 따라서 글 가지고 오기
         if (title != null && !title.isBlank() && status_bcode != null && !status_bcode.equals(
             "ALL")) {
-            entitiesPage = postRepository.findByTitleContainingAndStatusBcode(title, status_bcode, pageable);
+            entitiesPage = postRepository.findByTitleContainingAndStatusBcode(title, status_bcode,
+                pageable);
         } else if (title != null && !title.isBlank()) {
             entitiesPage = postRepository.findByTitleContaining(title, pageable);
         } else if (status_bcode != null && !status_bcode.equals("ALL")) {

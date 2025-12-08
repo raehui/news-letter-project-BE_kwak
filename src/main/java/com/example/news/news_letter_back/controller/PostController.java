@@ -24,22 +24,28 @@ public class PostController {
     @Autowired
     private PostSevice service;
 
-    // 글 발행
-    @PostMapping("/admin/post/publish/{postId}")
-    public String publish(@PathVariable Long postId) {
-        return service.publish(postId);
+    // (새로 작성한) 글 발행
+    @PostMapping("/admin/post/publish")
+    public String publishNew(@RequestBody PostRequestDto postRequestDto) {
+        return service.publishNew(postRequestDto);
     }
 
-    // 글 임시저장
+    // (새로 작성한)글 임시저장
     @PostMapping("/admin/post/draft")
     public String draft(@RequestBody PostRequestDto postRequestDto) {
         return service.draft(postRequestDto);
     }
 
-    // 글 수정
-    @PatchMapping("/admin/post/update")
-    public String update(@RequestBody PostRequestDto postRequestDto) {
-        return service.update(postRequestDto);
+    // (임시저장한) 글을 재임시저장
+    @PatchMapping("/admin/post/update/redraft")
+    public String updateRedraft(@RequestBody PostRequestDto postRequestDto) {
+        return service.updateRedraft(postRequestDto);
+    }
+
+    // (임시저장한) 글을 발행하기
+    @PatchMapping("/admin/post/update/publish")
+    public String updatePublish(@RequestBody PostRequestDto postRequestDto) {
+        return service.updatePublish(postRequestDto);
     }
 
     // 글 삭제
@@ -52,7 +58,7 @@ public class PostController {
     // 검색조건 : 제목, 글 상태에 맞는 글 목록 조회하기
     @GetMapping("/admin/post/list")
     public PageResponseDto<PostListInfoDto> getPost(@RequestBody PostRequestDto postRequestDto) {
-        Page<PostListInfoDto> pageResult=service.getPost(postRequestDto);
+        Page<PostListInfoDto> pageResult = service.getPost(postRequestDto);
         return PageResponseDto.from(pageResult);
     }
 
