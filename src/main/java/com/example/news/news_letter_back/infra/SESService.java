@@ -9,4 +9,6 @@ public interface SESService {
     public void sendBulkTemplateEmail(List<Subscriber> subscribers, String title, String contents);
 
     public boolean editEmailTemplate(EditEmailTemplateRequestDto request);
+
+    public boolean createTemplate(String templateId, String title, String contents);
 }

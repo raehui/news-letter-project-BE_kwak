@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.model.*;
+import software.amazon.awssdk.services.sesv2.SesV2Client;
+import software.amazon.awssdk.services.sesv2.model.CreateEmailTemplateRequest;
+import software.amazon.awssdk.services.sesv2.model.EmailTemplateContent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,11 +22,20 @@ public class SESServiceImpl implements SESService {
     private String sender;
     private final Region region = Region.AP_NORTHEAST_2;
 
+    // V1: 이메일 발송용 클라이언트
     private SesClient createClient() {
         return SesClient.builder()
                 .region(this.region)
                 .build();
     }
+
+    // V2: 템플릿 생성/관리용 클라이언트
+    private SesV2Client createV2Client() {
+        return SesV2Client.builder()
+                .region(this.region)
+                .build();
+    }
+
 
     @Override
     public void sendBulkTemplateEmail(List<Subscriber> subscribers, String title, String contents) {
@@ -94,6 +106,27 @@ public class SESServiceImpl implements SESService {
         } catch (SesException e) {
             System.err.println("SES Update Error: " + e.awsErrorDetails().errorMessage());
             throw new RuntimeException("SES 템플릿 수정 실패: " + e.awsErrorDetails().errorMessage(), e);
+        }
+    }
+
+    @Override
+    public boolean createTemplate(String templateId, String title, String contents) {
+        try (SesV2Client client = createV2Client()) {
+            CreateEmailTemplateRequest request = CreateEmailTemplateRequest.builder()
+                    .templateName(templateId)
+                    .templateContent(EmailTemplateContent.builder()
+                            .subject(title)
+                            .html(contents)
+                            .build())
+                    .build();
+
+            client.createEmailTemplate(request);
+
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

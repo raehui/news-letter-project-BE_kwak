@@ -9,6 +9,7 @@ import com.example.news.news_letter_back.infra.SESService;
 import com.example.news.news_letter_back.repository.AdminUserRepository;
 import com.example.news.news_letter_back.repository.NewsletterRepository;
 import com.example.news.news_letter_back.repository.SubscriberRepository;
+import com.example.news.news_letter_back.utils.HashGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -87,10 +88,21 @@ public class NewsServiceImpl implements NewsService {
             }
 
             AdminUser admin = admins.get(0);
-            Newsletter entity = CreateEmailRequestDto.toEntity(request, admin);
 
+            // 랜덤 templateId 생성
+            String templateId;
+            do {
+                templateId = "newsletter-template-" + HashGenerator.generateHash();
+            } while (newsletterRepository.findByTemplateId(templateId));
 
-            var saved = newsletterRepository.save(entity);
+            // 엔티티 생성
+            Newsletter entity = CreateEmailRequestDto.toEntity(request, admin, templateId);
+
+            // DB 저장
+            Newsletter saved = newsletterRepository.save(entity);
+
+            // AWS SES 템플릿 생성
+            sesService.createTemplate(templateId, request.getTitle(), request.getContents());
 
             return ResponseEntity.ok(
                     Map.of(

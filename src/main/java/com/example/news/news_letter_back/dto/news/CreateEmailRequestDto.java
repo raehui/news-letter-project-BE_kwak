@@ -13,10 +13,11 @@ public class CreateEmailRequestDto {
     @NotBlank
     private String contents;
 
-    public static Newsletter toEntity(CreateEmailRequestDto dto, AdminUser admin) {
+    public static Newsletter toEntity(CreateEmailRequestDto dto, AdminUser admin, String templateId) {
         return Newsletter.builder()
                 .newsTitle(dto.title)
                 .newsContentHtml(dto.contents)
+                .templateId(templateId)
                 .statusAcode("EMAIL")
                 .statusBcode("DRAFT")
                 .scheduledAt(null)
