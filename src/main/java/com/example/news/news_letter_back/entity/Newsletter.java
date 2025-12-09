@@ -25,6 +25,9 @@ public class Newsletter {
     @JoinColumn(name = "admin_id", nullable = false)
     private AdminUser adminUser;
 
+    @Column(name = "template_id", nullable = false, unique = true)
+    private String templateId;
+
     @Column(name = "news_title", nullable = false, columnDefinition = "TEXT")
     private String newsTitle;
 
