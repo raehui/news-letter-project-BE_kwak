@@ -27,3 +27,104 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - monitoring
+  app:
+    build: .
+    container_name: newsletter-app
+    ports:
+      - "9000:9000"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      JAVA_OPTS: "-Xms256m -Xmx512m"  # JVM 힙 메모리 제한
+    deploy:
+      resources:
+        limits:
+          cpus: '2'    # CPU 2코어로 제한
+          memory: 1G   # 전체 메모리 1GB로 제한
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    depends_on:
+      postgres:
+        condition: service_healthy  # MySQL의 health check가 성공할 때까지 대기
+      redis:
+        condition: service_started  # Redis가 시작되면 바로 시작
+    networks:
+      - monitoring
+
+  # 데이터 수집
+  # 스프링부트의 데이터를 추출하는 역할
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus_newsletter
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  # 데이터 시각화
+  # 대시보드 - 데이
+  grafana:
+    image: grafana/grafana
+    container_name: grafana_newsletter
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  # Redis
+  redis:
+    image: redis:7.0
+    container_name: redis-server_newsletter
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+
+  # Redis Exporter
+  redis_exporter:
+    image: oliver006/redis_exporter
+    container_name: redis_exporter_newsletter
+    ports:
+      - "9121:9121"
+    command:
+      - '--redis.addr=redis://redis:6379'
+    depends_on:
+      - redis
+    networks:
+      - monitoring
+
+
+volumes:
+  mysql_data:
+  grafana_data:
+  redis_data:
+
+networks:
+  monitoring:

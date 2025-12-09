@@ -1,0 +1,14 @@
+# 프로메테우스가 어디로부터 메트릭을 가져올지 정의
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'newsletter-app'
+    # context-path를 직접 작성해줘야 함
+    metrics_path: '/api/v1/actuator/prometheus'
+    static_configs:
+      - targets: [ 'app:9000' ]
+  - job_name: 'redis'
+    static_configs:
+      - targets: [ 'redis_exporter:9121' ]

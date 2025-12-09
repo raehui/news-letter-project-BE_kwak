@@ -40,6 +40,11 @@ dependencies {
     // Swagger
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.14"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14"
+    
+    // Actuator로 모니터링 환경 셋팅
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
 }
 
 tasks.named('test') {
