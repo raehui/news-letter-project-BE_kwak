@@ -1,7 +1,11 @@
 HELP.md
+# 클라우드 모니터링 환경 설정 시 추가
+*.pem
+portfolio-key.*
+portfolio-key
+
 pgdata/
 application.yml
-.env
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -38,3 +42,11 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+terraform.tfvars
+.env
