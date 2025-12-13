@@ -1,6 +1,7 @@
 package com.example.news.news_letter_back.entity;
 
 import jakarta.persistence.*;
+import java.time.OffsetDateTime;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,6 +16,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "admin_user")
 public class AdminUser {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가 매핑
     private Long adminId;
@@ -25,16 +27,19 @@ public class AdminUser {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "is_active",nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @CreationTimestamp // 생성 시 현재 시간 자동 삽입
+    // 생성 시 현재 시간 자동 삽입
     @Column(name = "created_at", updatable = false)
-    private ZonedDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    @UpdateTimestamp // 수정 시 현재 시간 자동 삽입
+    // 수정 시 현재 시간 자동 삽입
     @Column(name = "updated_at")
-    private ZonedDateTime updatedAt;
+    private OffsetDateTime updatedAt;
+
+    @Column(nullable = false)
+    private String role;
 
 
 }
