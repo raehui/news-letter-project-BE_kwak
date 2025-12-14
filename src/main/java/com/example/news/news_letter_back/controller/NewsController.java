@@ -1,17 +1,13 @@
 package com.example.news.news_letter_back.controller;
 
-import com.example.news.news_letter_back.dto.SendNewsRequestDto;
-import com.example.news.news_letter_back.dto.news.CreateEmailRequestDto;
-import com.example.news.news_letter_back.dto.news.EditEmailTemplateRequestDto;
-import com.example.news.news_letter_back.dto.news.EditEmailTemplateResponseDto;
-import com.example.news.news_letter_back.dto.news.GetNewsletterListResponseDto;
+import com.example.news.news_letter_back.dto.news.*;
 import com.example.news.news_letter_back.service.NewsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +21,7 @@ public class NewsController {
 
     // 뉴스레터 이메일을 전송
     @PostMapping("/send")
-    public ResponseEntity<?> sendNews(@Valid @RequestBody SendNewsRequestDto request) {
+    public ResponseEntity<SendNewsResponseDto> sendNews(@Valid @RequestBody SendNewsRequestDto request) {
         return service.sendNews(request);
     }
 
@@ -38,15 +34,24 @@ public class NewsController {
     // 이메일 템플릿 목록
     @GetMapping("/list")
     public ResponseEntity<GetNewsletterListResponseDto> getEmailList(
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
-            Pageable pageable
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "DESC") String sort
     ) {
+        Sort.Direction direction;
+        if (sort.equalsIgnoreCase("DESC")) {
+            direction = Sort.Direction.DESC;
+        } else {
+            direction = Sort.Direction.ASC;
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, "createdAt"));
         return service.getEmailList(pageable);
     }
 
     // 이메일 템플릿 등록
     @PostMapping("/create")
-    public ResponseEntity<?> createEmail(@RequestBody CreateEmailRequestDto request) {
+    public ResponseEntity<CreateEmailResponseDto> createEmail(@RequestBody CreateEmailRequestDto request) {
         return service.createEmail(request);
     }
 }

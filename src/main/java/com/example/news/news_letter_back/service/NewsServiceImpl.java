@@ -1,6 +1,5 @@
 package com.example.news.news_letter_back.service;
 
-import com.example.news.news_letter_back.dto.SendNewsRequestDto;
 import com.example.news.news_letter_back.dto.news.*;
 import com.example.news.news_letter_back.entity.AdminUser;
 import com.example.news.news_letter_back.entity.Newsletter;
@@ -31,16 +30,15 @@ public class NewsServiceImpl implements NewsService {
     private SESService sesService;
 
     @Override
-    public ResponseEntity<?> sendNews(SendNewsRequestDto request) {
+    public ResponseEntity<SendNewsResponseDto> sendNews(SendNewsRequestDto request) {
         // 현재 구독자 목록 가져오기
         List<Subscriber> subscribers = subscriberRepository.findByStatusAcodeAndStatusBcode("SUBSCRIBE",
                 "SUB");
 
         sesService.sendBulkTemplateEmail(subscribers, request.getTitle(), request.getContents());
 
-        return ResponseEntity.ok(
-                Map.of("message", "")
-        );
+        SendNewsResponseDto result = SendNewsResponseDto.fromEntity("SEND_SUCCESS");
+        return ResponseEntity.ok(result);
     }
 
     @Override
@@ -79,7 +77,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public ResponseEntity<?> createEmail(CreateEmailRequestDto request) {
+    public ResponseEntity<CreateEmailResponseDto> createEmail(CreateEmailRequestDto request) {
         try {
             // 관리자 가져오기
             List<AdminUser> admins = adminUserRepository.findAll();
@@ -93,7 +91,7 @@ public class NewsServiceImpl implements NewsService {
             String templateId;
             do {
                 templateId = "newsletter-template-" + HashGenerator.generateHash();
-            } while (newsletterRepository.findByTemplateId(templateId));
+            } while (newsletterRepository.existsByTemplateId(templateId));
 
             // 엔티티 생성
             Newsletter entity = CreateEmailRequestDto.toEntity(request, admin, templateId);
@@ -104,20 +102,14 @@ public class NewsServiceImpl implements NewsService {
             // AWS SES 템플릿 생성
             sesService.createTemplate(templateId, request.getTitle(), request.getContents());
 
-            return ResponseEntity.ok(
-                    Map.of(
-                            "id", saved.getId(),
-                            "message", "NEWSLETTER_CREATED"
-                    )
-            );
+            CreateEmailResponseDto result = CreateEmailResponseDto.fromEntity(saved.getId(), "NEWSLETTER_CREATED");
+
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             System.out.println(e.toString());
-            return ResponseEntity.internalServerError()
-                    .body(
-                            Map.of(
-                                    "message", "CREATE_FAILED"
-                            )
-                    );
+            CreateEmailResponseDto result = CreateEmailResponseDto.fromEntity("CREATED_FAILED");
+
+            return ResponseEntity.internalServerError().body(result);
         }
     }
 }

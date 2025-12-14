@@ -1,4 +1,4 @@
-package com.example.news.news_letter_back.dto;
+package com.example.news.news_letter_back.dto.news;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

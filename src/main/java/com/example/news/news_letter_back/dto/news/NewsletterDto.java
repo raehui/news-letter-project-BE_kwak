@@ -12,8 +12,6 @@ public class NewsletterDto {
 
     private String status;    // tb_bcode
 
-    private String createdAt;
-    private String scheduledAt;
     private String publishedAt;
 
     public static NewsletterDto fromEntity(Newsletter entity) {
@@ -21,8 +19,6 @@ public class NewsletterDto {
                 .id(entity.getId())
                 .title(entity.getNewsTitle())
                 .status(entity.getStatusBcode())
-                .createdAt(entity.getCreatedAt() != null ? entity.getCreatedAt().toString() : null)
-                .scheduledAt(entity.getScheduledAt() != null ? entity.getScheduledAt().toString() : null)
                 .publishedAt(entity.getPublishedAt() != null ? entity.getPublishedAt().toString() : null)
                 .build();
     }
