@@ -31,7 +31,6 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      # Gradle 캐시
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -46,8 +45,11 @@ jobs:
         run: |
           echo "Selected environment: ${{ github.event.inputs.environment }}"
 
-      # clean 제거 + 병렬 빌드
       - name: Build (Gradle)
         run: |
           chmod +x ./gradlew
           ./gradlew build -x test --parallel --daemon
+
+      - name: Build Docker image
+        run: |
+          docker build -t newsletter-back:${{ github.sha }} .
