@@ -1,0 +1,78 @@
+name: CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "배포 환경"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
+
+jobs:
+  push-ecr:
+    runs-on: ubuntu-latest
+
+    # OIDC 사용에 필요한 최소 권한
+    permissions:
+      id-token: write
+      contents: read
+
+    # 공통 변수 (ECR/도커 경로 포함)
+    env:
+      AWS_REGION: ap-northeast-2
+      AWS_ACCOUNT_ID: 426014927099
+      ECR_REPOSITORY: newsletter
+      ECR_REGISTRY: 426014927099.dkr.ecr.ap-northeast-2.amazonaws.com
+
+      # Repo 구조가 /server 아래에 있는 현재 프로젝트 구성 기준
+      DOCKER_CONTEXT: ./server
+      DOCKERFILE_PATH: ./server/Dockerfile
+
+      # 태그 전략: (1) 커밋 SHA (불변) (2) 환경 태그(dev/prod) (가변)
+      IMAGE_TAG_SHA: ${{ github.sha }}
+      IMAGE_TAG_ENV: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Print selected environment
+        run: |
+          echo "Selected environment: ${{ github.event.inputs.environment }}"
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::426014927099:role/github-actions-ecr-push
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -f "$DOCKERFILE_PATH" \
+            -t "$ECR_REPOSITORY:$IMAGE_TAG_SHA" \
+            "$DOCKER_CONTEXT"
+
+      - name: Tag & Push image to ECR
+        run: |
+          set -euo pipefail
+
+          # 1) immutable tag (commit SHA)
+          docker tag "$ECR_REPOSITORY:$IMAGE_TAG_SHA" "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHA"
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHA"
+
+          # 2) mutable tag (dev/prod)
+          docker tag "$ECR_REPOSITORY:$IMAGE_TAG_SHA" "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_ENV"
+          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_ENV"
+
+      - name: Summary
+        run: |
+          echo "Pushed: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHA"
+          echo "Pushed: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_ENV"
