@@ -1,5 +1,7 @@
 package com.example.news.news_letter_back.controller;
 
+import com.example.news.news_letter_back.dto.admin.AdminLoginRequestDto;
+import com.example.news.news_letter_back.dto.admin.AdminLoginResponseDto;
 import com.example.news.news_letter_back.dto.admin.AdminRegisterRequestDto;
 import com.example.news.news_letter_back.entity.AdminUser;
 import com.example.news.news_letter_back.service.AdminAuthService;
@@ -23,6 +25,10 @@ public class AdminAuthController {
         adminAuthService.register(adminRegisterRequestDto);
         return "관리자 회원가입에 성공했습니다.";
     }
-    // 로그인
 
+    // 로그인
+    @PostMapping("/admin/auth/login")
+    public AdminLoginResponseDto login(@RequestBody AdminLoginRequestDto adminLoginRequestDto) {
+        return adminAuthService.logoin(adminLoginRequestDto);
+    }
 }
