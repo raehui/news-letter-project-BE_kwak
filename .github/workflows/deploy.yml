@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  # main 브랜치 push 시 자동 실행
+  push:
+    branches: [ "main" ]
+
+  # GitHub UI에서 수동 실행
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "실행 환경 선택"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - prod
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      # Gradle 캐시
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Print selected environment
+        run: |
+          echo "Selected environment: ${{ github.event.inputs.environment }}"
+
+      # clean 제거 + 병렬 빌드
+      - name: Build (Gradle)
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test --parallel --daemon
