@@ -29,8 +29,8 @@ jobs:
       ECR_REGISTRY: 426014927099.dkr.ecr.ap-northeast-2.amazonaws.com
 
       # Repo 구조가 /server 아래에 있는 현재 프로젝트 구성 기준
-      BUILD_CONTEXT: ./server
-      DOCKERFILE_PATH: ./server/Dockerfile
+      BUILD_CONTEXT: .
+      DOCKERFILE_PATH: ./Dockerfile
 
       # 태그 전략: (1) 커밋 SHA (불변) (2) 환경 태그(dev/prod) (가변)
       IMAGE_TAG_SHA: ${{ github.sha }}
